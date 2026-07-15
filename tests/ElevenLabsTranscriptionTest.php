@@ -37,18 +37,20 @@ it('sends ElevenLabs transcription options in their documented locations', funct
     $filePosition = strpos($body, 'name="file"');
     $keytermPosition = strrpos($body, 'name="keyterms"');
 
+    if ($filePosition === false || $keytermPosition === false) {
+        throw new LogicException('Expected file and keyterms multipart fields.');
+    }
+
     expect((string) $client->lastRequest?->getUri())->toBe('https://api.elevenlabs.io/v1/speech-to-text?enable_logging=false')
         ->and($body)->toContain('name="model_id"')
         ->toContain('scribe_v2')
         ->toContain('name="language_code"')
         ->toContain('name="diarize"')
         ->toContain('name="keyterms"')
-        ->not->toContain('name="enable_logging"')
-        ->and($filePosition)->toBeInt()
-        ->and($keytermPosition)->toBeInt()
         ->and($filePosition)->toBeGreaterThan($keytermPosition)
         ->and($result->output->text)->toBe('Hello world')
         ->and($result->output->language)->toBe('en');
+    expect(str_contains($body, 'name="enable_logging"'))->toBeFalse();
 });
 
 it('uses source_url for remote media and normalizes separate multichannel transcripts', function () {
@@ -80,10 +82,10 @@ it('uses source_url for remote media and normalizes separate multichannel transc
 
     expect($body)->toContain('name="source_url"')
         ->toContain('https://cdn.example.com/call.mp3')
-        ->not->toContain('name="file"')
         ->and($result->output->text)->toBe("Hello.\nHi.")
         ->and($result->output->language)->toBe('en')
         ->and($result->output->segments)->toHaveCount(2)
         ->and($result->output->segments[0]->speaker)->toBe('0')
         ->and($result->output->segments[1]->speaker)->toBe('1');
+    expect(str_contains($body, 'name="file"'))->toBeFalse();
 });

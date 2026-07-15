@@ -65,17 +65,27 @@ it('streams audio to Scribe and normalizes transcript events', function () {
             'message_type' => 'input_audio_chunk',
             'audio_base_64' => '',
             'commit' => true,
-        ])
-        ->and($events[1])->toBeInstanceOf(TranscriptUpdate::class)
-        ->and($events[1]->text)->toBe('Hello wor')
-        ->and($events[1]->source)->toBe(TranscriptSource::Input)
-        ->and($events[2])->toBeInstanceOf(TranscriptCompleted::class)
-        ->and($events[2]->text)->toBe('Hello world')
-        ->and($events[2]->source)->toBe(TranscriptSource::Input)
-        ->and($events[3])->toBeInstanceOf(ProviderEvent::class)
-        ->and($events[3]->providerType)->toBe('committed_transcript_with_timestamps')
-        ->and($events[4])->toBeInstanceOf(ProviderEvent::class)
-        ->and($events[4]->providerType)->toBe('transport.binary')
+        ]);
+
+    $partial = $events[1] ?? null;
+    $completed = $events[2] ?? null;
+    $committed = $events[3] ?? null;
+    $binary = $events[4] ?? null;
+
+    if (! $partial instanceof TranscriptUpdate || ! $completed instanceof TranscriptCompleted || ! $committed instanceof ProviderEvent || ! $binary instanceof ProviderEvent) {
+        throw new LogicException('Expected normalized Scribe transcript events.');
+    }
+
+    expect($partial)->toBeInstanceOf(TranscriptUpdate::class)
+        ->and($partial->text)->toBe('Hello wor')
+        ->and($partial->source)->toBe(TranscriptSource::Input)
+        ->and($completed)->toBeInstanceOf(TranscriptCompleted::class)
+        ->and($completed->text)->toBe('Hello world')
+        ->and($completed->source)->toBe(TranscriptSource::Input)
+        ->and($committed)->toBeInstanceOf(ProviderEvent::class)
+        ->and($committed->providerType)->toBe('committed_transcript_with_timestamps')
+        ->and($binary)->toBeInstanceOf(ProviderEvent::class)
+        ->and($binary->providerType)->toBe('transport.binary')
         ->and($events[5])->toBeInstanceOf(LiveClosed::class);
 });
 
@@ -93,10 +103,15 @@ it('authenticates realtime transcription with a single-use token when supplied',
         ])
         ->connect($transport);
 
-    expect($transport->endpoint)->toBeInstanceOf(WebSocketEndpoint::class)
-        ->and($transport->endpoint?->headers)->not->toHaveKey('xi-api-key')
-        ->and($transport->endpoint?->url)->toContain('token=sutkn_browser')
+    $endpoint = $transport->endpoint;
+    if (! $endpoint instanceof WebSocketEndpoint) {
+        throw new LogicException('Expected a realtime WebSocket endpoint.');
+    }
+
+    expect($endpoint)->toBeInstanceOf(WebSocketEndpoint::class)
+        ->and($endpoint->url)->toContain('token=sutkn_browser')
         ->toContain('include_language_detection=true');
+    expect(array_key_exists('xi-api-key', $endpoint->headers))->toBeFalse();
 });
 
 it('normalizes documented Scribe errors', function () {
@@ -111,9 +126,14 @@ it('normalizes documented Scribe errors', function () {
         ->connect($transport);
     $events = iterator_to_array($session->events());
 
-    expect($events[0])->toBeInstanceOf(LiveError::class)
-        ->and($events[0]->code)->toBe('rate_limited')
-        ->and($events[0]->message)->toBe('Slow down')
+    $error = $events[0] ?? null;
+    if (! $error instanceof LiveError) {
+        throw new LogicException('Expected a normalized Scribe error.');
+    }
+
+    expect($error)->toBeInstanceOf(LiveError::class)
+        ->and($error->code)->toBe('rate_limited')
+        ->and($error->message)->toBe('Slow down')
         ->and($events[1])->toBeInstanceOf(LiveClosed::class);
 });
 

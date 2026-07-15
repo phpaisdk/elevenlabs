@@ -57,10 +57,10 @@ it('keeps voice changer query options out of the multipart form', function () {
         ->toContain('name="model_id"')
         ->toContain('eleven_multilingual_sts_v2')
         ->toContain('{"stability":0.6}')
-        ->toContain('name="remove_background_noise"')
-        ->not->toContain('name="enable_logging"')
-        ->not->toContain('name="optimize_streaming_latency"')
-        ->not->toContain('name="output_format"');
+        ->toContain('name="remove_background_noise"');
+    expect(str_contains($body, 'name="enable_logging"'))->toBeFalse();
+    expect(str_contains($body, 'name="optimize_streaming_latency"'))->toBeFalse();
+    expect(str_contains($body, 'name="output_format"'))->toBeFalse();
 });
 
 it('sends voice isolation fields as multipart form values', function () {
