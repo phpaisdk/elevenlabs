@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace AiSdk\ElevenLabs\Tests\Fakes;
+
+use Nyholm\Psr7\Response;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+final class FakeHttpClient implements ClientInterface
+{
+    public ?RequestInterface $lastRequest = null;
+
+    /** @param array<string, string> $headers */
+    public function __construct(
+        private readonly int $status,
+        private readonly string $body,
+        private readonly string $contentType = 'application/json',
+        private readonly array $headers = [],
+    ) {}
+
+    public function sendRequest(RequestInterface $request): ResponseInterface
+    {
+        $this->lastRequest = $request;
+
+        return new Response($this->status, array_replace(['Content-Type' => $this->contentType], $this->headers), $this->body);
+    }
+
+    /** @return array<string, mixed> */
+    public function sentBody(): array
+    {
+        $body = json_decode((string) $this->lastRequest?->getBody(), true);
+
+        return is_array($body) ? $body : [];
+    }
+}
