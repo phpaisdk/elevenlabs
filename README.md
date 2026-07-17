@@ -388,19 +388,13 @@ composer test:all
 The default suite is fixture- and conformance-based. Credentialed Live network
 verification is separate and is not run by `composer test`.
 
-## Links
+## Documentation
 
-- [ElevenLabs API reference](https://elevenlabs.io/docs/api-reference)
-- [Realtime Speech to Text](https://elevenlabs.io/docs/api-reference/speech-to-text/v-1-speech-to-text-realtime)
-- [Single-use tokens](https://elevenlabs.io/docs/api-reference/tokens/create)
-- [Voice Changer](https://elevenlabs.io/docs/api-reference/speech-to-speech/convert)
-- [Voice Isolator](https://elevenlabs.io/docs/api-reference/audio-isolation/convert)
-- [Voice Design](https://elevenlabs.io/docs/api-reference/text-to-voice/design)
-- [Voice Remix](https://elevenlabs.io/docs/api-reference/text-to-voice/remix)
-- [Dubbing](https://elevenlabs.io/docs/api-reference/dubbing/create)
-- [Music](https://elevenlabs.io/docs/api-reference/music/compose)
-- [Video to Music](https://elevenlabs.io/docs/api-reference/music/video-to-music)
-- [Stem Separation](https://elevenlabs.io/docs/api-reference/music/separate-stems)
-- [Forced Alignment](https://elevenlabs.io/docs/api-reference/forced-alignment/create)
-- [Text to Dialogue with Timestamps](https://elevenlabs.io/docs/api-reference/text-to-dialogue/convert-with-timestamps)
-- [Project Documentation](https://github.com/phpaisdk)
+- [PHP AI SDK documentation](https://phpaisdk.com/docs)
+- [ElevenLabs documentation](https://phpaisdk.com/docs/elevenlabs)
+
+## Community
+
+- [Contributing](https://github.com/phpaisdk/.github/blob/main/CONTRIBUTING.md)
+- [Support](https://github.com/phpaisdk/.github/blob/main/SUPPORT.md)
+- For private security reports, email [security@phpaisdk.com](mailto:security@phpaisdk.com).
