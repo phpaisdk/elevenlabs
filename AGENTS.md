@@ -8,10 +8,11 @@ ElevenLabs generative media provider for the PHP AI SDK. Part of the framework-a
 use AiSdk\Content;
 use AiSdk\ElevenLabs;
 use AiSdk\Generate;
+use AiSdk\LocalFile;
 
 ElevenLabs::create(['apiKey' => '...']); // optional: environment variables below are read automatically
 
-$result = Generate::transcription(Content::audio('/path/to/audio.mp3'))
+$result = Generate::transcription(Content::audio(LocalFile::at('/path/to/audio.mp3')))
     ->model(ElevenLabs::model('model-id'))
     ->run();
 
