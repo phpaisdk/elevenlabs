@@ -89,3 +89,12 @@ it('uses source_url for remote media and normalizes separate multichannel transc
         ->and($result->output->segments[1]->speaker)->toBe('1');
     expect(str_contains($body, 'name="file"'))->toBeFalse();
 });
+
+it('rejects an ElevenLabs transcription answer that has no transcript', function (string $body) {
+    $factory = new Psr17Factory();
+    Generate::configure(new Sdk(new FakeHttpClient(200, $body), $factory, $factory));
+    ElevenLabs::create(['apiKey' => 'xi-test']);
+
+    expect(fn() => Generate::transcription(Content::audio('audio-bytes', 'audio/wav', 'a.wav'))->model(ElevenLabs::model('scribe_v2'))->run())
+        ->toThrow(AiSdk\Exceptions\InvalidResponseException::class);
+})->with(['{}', '[1,2]', '{"error":{"message":"quota"}}']);

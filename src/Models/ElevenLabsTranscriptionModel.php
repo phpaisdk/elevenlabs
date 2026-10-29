@@ -79,6 +79,9 @@ final class ElevenLabsTranscriptionModel extends BaseModel implements Transcript
                 static fn(array $transcript): ?string => is_string($transcript['text'] ?? null) ? $transcript['text'] : null,
                 $transcripts,
             ))));
+        if (! is_string($payload['text'] ?? null) && $transcripts === []) {
+            throw new \AiSdk\Exceptions\InvalidResponseException('ElevenLabs returned a response without a transcript.');
+        }
         $firstTranscript = $transcripts[0] ?? [];
         $language = $payload['language_code'] ?? $firstTranscript['language_code'] ?? null;
 
