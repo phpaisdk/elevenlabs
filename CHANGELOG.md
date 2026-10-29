@@ -2,6 +2,10 @@
 
 Notable changes to `aisdk/elevenlabs`. Release notes are also published at https://github.com/phpaisdk/elevenlabs/releases.
 
+## Unreleased (v0.10.1)
+
+- Transcription answers without a transcript raise `InvalidResponseException`.
+
 ## v0.10.0 — 2026-10-29
 
 ### What's new
